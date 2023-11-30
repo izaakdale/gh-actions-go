@@ -15,7 +15,12 @@ jobs:
         with:
           go-version: 1.21
       - name: test
-        run: go test ./...
+        run: go test ./... -json > TestResults.json
+      - name: Upload Go test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: TestResults.json
+          path: TestResults.json
 
   # job2
   build:
