@@ -1,0 +1,29 @@
+name: testandbuild
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # job 1
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: startup
+        run: echo "starting up test"
+      - name: get code
+        uses: actions/checkout@v3
+      - name: run tests
+        run: go test ./...
+
+  # job2
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: startup
+        run: echo "starting up build"
+      - name: get code
+        uses: actions/checkout@v3
+      - name: build
+        run: go build -o tester .
