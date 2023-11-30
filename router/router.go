@@ -14,11 +14,13 @@ type ctxKV string
 
 func New() http.Handler {
 	mux := http.NewServeMux()
+	ac := ActualConnection{}
 	mux.HandleFunc("/test", GetTest)
+	mux.HandleFunc("/users", GetUsers(ac))
 	return mux
 }
 
-func TestMiddle(next http.Handler) http.Handler {
+func SomeMiddle(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r = r.WithContext(context.WithValue(r.Context(), CtxKey, CtxVal))
 		next.ServeHTTP(w, r)
@@ -36,4 +38,24 @@ func GetTest(w http.ResponseWriter, r *http.Request) {
 
 func Error(w http.ResponseWriter, code int) {
 	http.Error(w, http.StatusText(code), code)
+}
+
+type DbConn interface {
+	Ping() error
+}
+type ActualConnection struct {
+}
+
+func (a ActualConnection) Ping() error {
+	return nil
+}
+
+func GetUsers(db DbConn) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := db.Ping(); err != nil {
+			Error(w, http.StatusInternalServerError)
+			return
+		}
+		w.Write([]byte("users"))
+	}
 }
