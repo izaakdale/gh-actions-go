@@ -14,17 +14,18 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.21
-      - name: Display Go version
-        run: go version
+      - name: test
+        run: go test ./...
 
-  # # job2
-  # build:
-  #   runs-on: ubuntu-latest
-  #   needs: test
-  #   steps:
-  #     - name: startup
-  #       run: echo "starting up build"
-  #     - name: get code
-  #       uses: actions/checkout@v3
-  #     - name: build
-  #       run: go build -o tester .
+  # job2
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go 1.21
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+      - name: build
+        run: go build -o tester .
