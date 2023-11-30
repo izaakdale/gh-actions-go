@@ -53,4 +53,8 @@ func TestGetter(t *testing.T) {
 			t.Error("status code is incorrect")
 		}
 	})
+
+	t.Run("failure on purpose", func(t *testing.T) {
+		t.Error("testing gh action conditional when test fails")
+	})
 }
